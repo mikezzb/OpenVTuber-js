@@ -1,11 +1,12 @@
 import { FC, useEffect, useRef } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas } from 'react-three-fiber';
 import useVRM from './hooks/useVRM';
 import VRM from './components/VRM';
 import './App.scss';
 import CameraView from './components/CameraView';
 import { loadFacemesh } from './utils/facemesh';
 import Controls from './components/Controls';
+import { loadPosenet } from './utils/poses';
 
 const App: FC = () => {
   const webcamRef = useRef(null);
@@ -13,8 +14,11 @@ const App: FC = () => {
   const [vrm, loadVRM] = useVRM();
 
   const init = async () => {
-    loadVRM('/vrms/AliciaSolid.vrm');
+    loadVRM(
+      'https://raw.githubusercontent.com/tattn/VRMKit/main/Tests/Resources/AliciaSolid.vrm'
+    );
     await loadFacemesh();
+    await loadPosenet();
   };
 
   useEffect(() => {
@@ -37,11 +41,9 @@ const App: FC = () => {
           zoom: 1.8,
         }}
       >
-        <directionalLight position={[1, 1, 1]} />
+        <directionalLight />
         <VRM webcamRef={webcamRef} meshCanvasRef={meshCanvasRef} vrm={vrm} />
         <Controls />
-        <gridHelper />
-        <axesHelper />
       </Canvas>
       <CameraView webcamRef={webcamRef} meshCanvasRef={meshCanvasRef} />
     </div>

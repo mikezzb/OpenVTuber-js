@@ -1,10 +1,5 @@
 import React, { useRef } from 'react';
-import {
-  extend,
-  ReactThreeFiber,
-  useFrame,
-  useThree,
-} from '@react-three/fiber';
+import { extend, ReactThreeFiber, useFrame, useThree } from 'react-three-fiber';
 import { Vector3 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 

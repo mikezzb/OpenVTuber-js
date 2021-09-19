@@ -1,11 +1,12 @@
 import { VRM as ThreeVRM } from '@pixiv/three-vrm';
 import { RefObject, useRef, FC } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useThree } from 'react-three-fiber';
 import { AnnotatedPrediction } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
 import Webcam from 'react-webcam';
 import { predictFace } from '../utils/facemesh';
 import { face2quaternion } from '../utils/faces';
-import { drawMesh } from '../utils';
+import { drawMesh } from '../utils/drawMesh';
+import { drawKeypoints, predictPose } from '../utils/poses';
 
 type Props = {
   vrm: ThreeVRM | null;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
+  const { scene } = useThree();
   const prevFaceRef = useRef<{
     face: AnnotatedPrediction[];
   }>({ face: [] });
@@ -25,6 +27,7 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       webcamRef.current !== null &&
       webcamRef.current.video.readyState === 4
     ) {
+      // Face Handling
       const predictions = await predictFace(webcamRef.current.video);
       if (predictions && (predictions[0] as any)?.annotations) {
         const annotations = (predictions[0] as any)?.annotations;
@@ -36,9 +39,14 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       meshCanvasRef.current.width = videoWidth;
       meshCanvasRef.current.height = videoHeight;
       const ctx = meshCanvasRef.current.getContext('2d');
-      requestAnimationFrame(() => {
-        drawMesh(predictions, ctx);
-      });
+      drawMesh(predictions, ctx);
+
+      // Pose Handling
+      const { keypoints } = (await predictPose(webcamRef.current.video)) || {};
+      if (keypoints) {
+        drawKeypoints(keypoints, ctx);
+      }
+
       vrm.update(delta);
     }
   });

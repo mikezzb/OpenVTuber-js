@@ -199,7 +199,7 @@ export const drawMesh = (predictions, ctx) => {
 
         ctx.beginPath();
         ctx.arc(x, y, 1, 0, 3 * Math.PI);
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = 'aqua';
         ctx.fill();
       }
     });

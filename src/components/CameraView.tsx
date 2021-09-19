@@ -11,7 +11,12 @@ type Props = {
 const CameraView: FC<Props> = ({ webcamRef, meshCanvasRef }) => {
   return (
     <>
-      <Webcam className="webcam-video" ref={webcamRef} />
+      <Webcam
+        onUserMediaError={e => alert(e)}
+        audio={false}
+        className="webcam-video"
+        ref={webcamRef}
+      />
       <canvas
         width={320}
         height={240}
