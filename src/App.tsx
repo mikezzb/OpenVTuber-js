@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import useVRM from './hooks/useVRM';
+import VRM from './components/VRM';
 import './App.scss';
 import CameraView from './components/CameraView';
 import { loadFacemesh } from './utils/facemesh';
@@ -37,6 +38,7 @@ const App: FC = () => {
         }}
       >
         <directionalLight position={[1, 1, 1]} />
+        <VRM webcamRef={webcamRef} meshCanvasRef={meshCanvasRef} vrm={vrm} />
         <Controls />
         <gridHelper />
         <axesHelper />
