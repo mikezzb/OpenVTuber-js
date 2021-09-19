@@ -5,9 +5,13 @@ import { MediaPipeFaceMesh } from '@tensorflow-models/face-landmarks-detection/d
 let net: MediaPipeFaceMesh;
 
 export const loadFacemesh = async () => {
-  net = await facemesh.load();
+  net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh, {
+    maxFaces: 1,
+  });
 };
 
 export const predictFace = async (input: HTMLVideoElement) => {
-  return await net.estimateFaces({ input });
+  if (net) {
+    return await net.estimateFaces({ input });
+  }
 };

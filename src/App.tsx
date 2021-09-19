@@ -1,26 +1,49 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FC, useEffect, useRef } from 'react';
+import { Canvas } from '@react-three/fiber';
+import useVRM from './hooks/useVRM';
+import './App.scss';
+import CameraView from './components/CameraView';
+import { loadFacemesh } from './utils/facemesh';
+import Controls from './components/Controls';
 
-function App() {
+const App: FC = () => {
+  const webcamRef = useRef(null);
+  const meshCanvasRef = useRef(null);
+  const [vrm, loadVRM] = useVRM();
+
+  const init = async () => {
+    loadVRM('/vrms/AliciaSolid.vrm');
+    await loadFacemesh();
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Canvas
+        style={{
+          height: '100vh',
+          width: '100vw',
+        }}
+        className="fiber-canvas"
+        camera={{
+          fov: 30,
+          near: 0.1,
+          far: 20,
+          position: [0, 1, 5],
+          zoom: 1.8,
+        }}
+      >
+        <directionalLight position={[1, 1, 1]} />
+        <Controls />
+        <gridHelper />
+        <axesHelper />
+      </Canvas>
+      <CameraView webcamRef={webcamRef} meshCanvasRef={meshCanvasRef} />
     </div>
   );
-}
+};
 
 export default App;
