@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+const Z_INDEX = 2;
+
 export const face2quaternion = annotations => {
   const faces = annotations.silhouette;
   const x1 = new THREE.Vector3().fromArray(faces[9]);
@@ -12,4 +14,10 @@ export const face2quaternion = annotations => {
     .makeBasis(xaxis, yaxis, zaxis)
     .premultiply(new THREE.Matrix4().makeRotationZ(Math.PI));
   return new THREE.Quaternion().setFromRotationMatrix(mat);
+};
+
+export const lipsOpenFactor = annotations => {
+  const lower = annotations.lipsLowerInner[5][Z_INDEX];
+  const upper = annotations.lipsUpperInner[5][Z_INDEX];
+  return lower - upper;
 };

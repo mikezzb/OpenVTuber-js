@@ -1,10 +1,10 @@
 import { VRM as ThreeVRM, VRMSchema } from '@pixiv/three-vrm';
 import { RefObject, useRef, FC } from 'react';
-import { useFrame, useThree } from 'react-three-fiber';
+import { useFrame } from 'react-three-fiber';
 import { AnnotatedPrediction } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
 import Webcam from 'react-webcam';
 import { predictFace } from '../utils/facemesh';
-import { face2quaternion } from '../utils/faces';
+import { face2quaternion, lipsOpenFactor } from '../utils/faces';
 import { drawMesh } from '../utils/drawMesh';
 import { drawKeypoints, getAngle, predictPose } from '../utils/poses';
 
@@ -15,7 +15,6 @@ type Props = {
 };
 
 const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
-  const { scene } = useThree();
   const prevState = useRef<{
     face: AnnotatedPrediction[];
     angle: Record<string, any>;
@@ -32,9 +31,15 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       const predictions = await predictFace(webcamRef.current.video);
       if (predictions && (predictions[0] as any)?.annotations) {
         const annotations = (predictions[0] as any)?.annotations;
+        // HEAD
         vrm.humanoid
           .getBoneNode(VRMSchema.HumanoidBoneName.Head)
           .quaternion.slerp(face2quaternion(annotations), 0.1);
+        // Lips
+        vrm.blendShapeProxy.setValue(
+          VRMSchema.BlendShapePresetName.A,
+          lipsOpenFactor(annotations)
+        );
       }
       const videoWidth = webcamRef.current.video.videoWidth;
       const videoHeight = webcamRef.current.video.videoHeight;
