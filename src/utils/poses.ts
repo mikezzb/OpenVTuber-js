@@ -1,34 +1,38 @@
-import * as posenet from '@tensorflow-models/posenet';
+import * as poseDetection from '@tensorflow-models/pose-detection';
 import { DRAWING_COLOR, VIDEO_SIZE } from '../config';
 
-let net: posenet.PoseNet;
+let net: poseDetection.PoseDetector;
 
 const ADOPTION_POINT = 0.86;
-const SCALE = 2;
+const SCALE = 1;
 
 export const loadPosenet = async () => {
-  net = await posenet.load({
-    inputResolution: {
-      height: VIDEO_SIZE.height * SCALE,
-      width: VIDEO_SIZE.width * SCALE,
-    },
-    architecture: 'ResNet50',
-    outputStride: 32,
-  });
+  net = await poseDetection.createDetector(
+    poseDetection.SupportedModels.PoseNet,
+    {
+      quantBytes: 4,
+      inputResolution: VIDEO_SIZE,
+      architecture: 'ResNet50',
+      outputStride: 16,
+    }
+  );
+  console.log(`posenet loaded`);
 };
 
 export const predictPose = async (input: HTMLVideoElement) => {
   if (net) {
-    return await net.estimateSinglePose(input);
+    return await net.estimatePoses(input, {
+      maxPoses: 1,
+    });
   }
 };
 
-export const drawKeypoints = (keypoints: posenet.Keypoint[], ctx) => {
+export const drawKeypoints = (keypoints: poseDetection.Keypoint[], ctx) => {
   const poseParts = {};
   keypoints.forEach(keypoint => {
     if (keypoint.score > ADOPTION_POINT) {
-      const { y, x } = keypoint.position;
-      poseParts[keypoint.part] = {
+      const { y, x } = keypoint;
+      poseParts[keypoint.name] = {
         x: VIDEO_SIZE.width - x,
         y: VIDEO_SIZE.height - y,
       };

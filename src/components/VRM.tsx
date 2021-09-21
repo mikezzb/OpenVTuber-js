@@ -44,12 +44,17 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       drawMesh(predictions, ctx);
 
       // Pose Handling
-      const { keypoints } = (await predictPose(webcamRef.current.video)) || {};
+      const [{ keypoints }] = (await predictPose(webcamRef.current.video)) || [
+        {},
+      ];
       if (keypoints) {
         const poseParts: any = drawKeypoints(keypoints, ctx);
 
-        if (poseParts.leftShoulder && poseParts.rightShoulder) {
-          let angle = getAngle(poseParts.rightShoulder, poseParts.leftShoulder);
+        if (poseParts.left_shoulder && poseParts.right_shoulder) {
+          let angle = getAngle(
+            poseParts.right_shoulder,
+            poseParts.left_shoulder
+          );
           if (angle !== null) {
             angle = -angle;
             prevState.current.angle.Spine = angle;
@@ -58,8 +63,8 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
             ).rotation.z = angle;
           }
         }
-        if (poseParts.leftShoulder && poseParts.leftElbow) {
-          let angle = getAngle(poseParts.leftElbow, poseParts.leftShoulder);
+        if (poseParts.left_shoulder && poseParts.left_elbow) {
+          let angle = getAngle(poseParts.left_elbow, poseParts.left_shoulder);
           if (angle !== null) {
             angle = Math.PI - angle;
             prevState.current.angle.RightUpperArm = angle;
@@ -69,8 +74,8 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
             ).rotation.z = angle;
           }
         }
-        if (poseParts.leftWrist && poseParts.leftElbow) {
-          let angle = getAngle(poseParts.leftWrist, poseParts.leftElbow);
+        if (poseParts.left_wrist && poseParts.left_elbow) {
+          let angle = getAngle(poseParts.left_wrist, poseParts.left_elbow);
           if (angle !== null) {
             angle = Math.PI - angle;
             prevState.current.angle.RightLowerArm = angle;
@@ -80,8 +85,8 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
             ).rotation.z = angle;
           }
         }
-        if (poseParts.rightShoulder && poseParts.rightElbow) {
-          let angle = getAngle(poseParts.rightElbow, poseParts.rightShoulder);
+        if (poseParts.right_shoulder && poseParts.right_elbow) {
+          let angle = getAngle(poseParts.right_elbow, poseParts.right_shoulder);
           if (angle !== null) {
             angle = angle * -1;
             prevState.current.angle.LeftUpperArm = angle;
@@ -91,8 +96,8 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
             ).rotation.z = angle;
           }
         }
-        if (poseParts.rightWrist && poseParts.rightElbow) {
-          let angle = getAngle(poseParts.rightWrist, poseParts.rightElbow);
+        if (poseParts.right_wrist && poseParts.right_elbow) {
+          let angle = getAngle(poseParts.right_wrist, poseParts.right_elbow);
           if (angle !== null) {
             angle = -angle;
             prevState.current.angle.LeftLowerArm = angle;
