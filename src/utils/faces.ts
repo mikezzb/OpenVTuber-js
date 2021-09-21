@@ -3,8 +3,9 @@ import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import { MediaPipeFaceMesh } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
 
 import * as THREE from 'three';
+import { Coord3D } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh/util';
 import faceGeo from './faceGeo.json';
-import { drawLandmarks } from '.';
+import { drawLandmarks, euclideanDistance, getOpenFactor } from '.';
 
 // MODEL
 
@@ -24,7 +25,14 @@ export const predictFace = async (input: HTMLVideoElement) => {
 
 // VRM
 
-const Z_INDEX = 2;
+const RIGHT_EYE_POINTS = [263, 362, 386, 374];
+const LEFT_EYE_POINTS = [133, 33, 159, 145];
+
+const LIPS_OPEN_SAMPLES = [0, 3, 6, 9];
+const LIPS_OPEN_SAMPLES_LENGTH = LIPS_OPEN_SAMPLES.length;
+const EYES_OPEN_SAMPLES = [0, 1, 2, 3, 4, 5, 6];
+const EYES_OPEN_SAMPLES_LENGTH = EYES_OPEN_SAMPLES.length;
+const CLOSE_EYE_BOUNDARY = 0.1;
 
 export const face2quaternion = annotations => {
   const faces = annotations.silhouette;
@@ -41,10 +49,43 @@ export const face2quaternion = annotations => {
   return new THREE.Quaternion().setFromRotationMatrix(mat);
 };
 
-export const lipsOpenFactor = annotations => {
-  const lower = annotations.lipsLowerInner[5][Z_INDEX];
-  const upper = annotations.lipsUpperInner[5][Z_INDEX];
-  return lower - upper;
+export const lipsOpenFactor = annotations =>
+  getOpenFactor(
+    annotations,
+    'lipsLowerInner',
+    'lipsUpperInner',
+    LIPS_OPEN_SAMPLES,
+    LIPS_OPEN_SAMPLES_LENGTH
+  );
+
+type EyesOpen = {
+  left: boolean;
+  right: boolean;
+};
+
+export const getEyesOpen = (scaledMesh: Coord3D[]): EyesOpen => {
+  const leftHorizDistance = euclideanDistance(
+    scaledMesh[LEFT_EYE_POINTS[2]],
+    scaledMesh[LEFT_EYE_POINTS[3]]
+  );
+  const leftVertDistance = euclideanDistance(
+    scaledMesh[LEFT_EYE_POINTS[0]],
+    scaledMesh[LEFT_EYE_POINTS[1]]
+  );
+  const rightHorizDistance = euclideanDistance(
+    scaledMesh[RIGHT_EYE_POINTS[2]],
+    scaledMesh[RIGHT_EYE_POINTS[3]]
+  );
+  const rightVertDistance = euclideanDistance(
+    scaledMesh[RIGHT_EYE_POINTS[0]],
+    scaledMesh[RIGHT_EYE_POINTS[1]]
+  );
+  const leftOpenFactor = leftHorizDistance / (2 * leftVertDistance);
+  const rightOpenFactor = rightHorizDistance / (2 * rightVertDistance);
+  return {
+    right: rightOpenFactor < CLOSE_EYE_BOUNDARY,
+    left: leftOpenFactor < CLOSE_EYE_BOUNDARY,
+  };
 };
 
 // CANVAS

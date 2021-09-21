@@ -8,6 +8,7 @@ import {
   lipsOpenFactor,
   drawMesh,
   predictFace,
+  getEyesOpen,
 } from '../utils/faces';
 import { drawKeypoints, getAngle, predictPose } from '../utils/poses';
 
@@ -42,6 +43,16 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
         vrm.blendShapeProxy.setValue(
           VRMSchema.BlendShapePresetName.A,
           lipsOpenFactor(annotations)
+        );
+        // Eyes
+        const eyesOpen = getEyesOpen(predictions[0].scaledMesh as any);
+        vrm.blendShapeProxy.setValue(
+          VRMSchema.BlendShapePresetName.BlinkL,
+          eyesOpen.left ? 1 : 0
+        );
+        vrm.blendShapeProxy.setValue(
+          VRMSchema.BlendShapePresetName.BlinkR,
+          eyesOpen.right ? 1 : 0
         );
       }
       const videoWidth = webcamRef.current.video.videoWidth;
