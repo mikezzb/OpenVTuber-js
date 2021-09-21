@@ -7,7 +7,6 @@ import CameraView from './components/CameraView';
 import { loadFacemesh } from './utils/faces';
 import Controls from './components/Controls';
 import { loadPosenet } from './utils/poses';
-import { loadHandpose } from './utils/hands';
 
 const App: FC = () => {
   const webcamRef = useRef(null);
@@ -18,7 +17,9 @@ const App: FC = () => {
     loadVRM(
       'https://raw.githubusercontent.com/mikezzb/kibou/master/public/vrms/AvatarSample_B.vrm?token=AFSVMPBOMNLNEITIUBH75DDBKKZUM'
     );
-    await Promise.all([loadFacemesh(), loadPosenet(), loadHandpose()]);
+    await loadFacemesh();
+    await loadPosenet();
+    // await loadHandpose();
   };
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const App: FC = () => {
           height: '100vh',
           width: '100vw',
         }}
+        pixelRatio={2}
         className="fiber-canvas"
         camera={{
           fov: 30,

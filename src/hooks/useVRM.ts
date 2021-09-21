@@ -1,4 +1,4 @@
-import { VRM, VRMSchema } from '@pixiv/three-vrm';
+import { VRM, VRMSchema, VRMUtils } from '@pixiv/three-vrm';
 import { useRef, useState } from 'react';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
@@ -11,6 +11,7 @@ const useVRM = (): [VRM | null, (_: string) => void] => {
   const loadVRM = (url: string): void => {
     loader.load(url, gltf => {
       VRM.from(gltf).then(vrm => {
+        VRMUtils.removeUnnecessaryJoints(gltf.scene);
         vrm.scene.rotateY(Math.PI);
         vrm.humanoid.getBoneNode(
           VRMSchema.HumanoidBoneName.LeftUpperArm
