@@ -1,6 +1,8 @@
 import * as posenet from '@tensorflow-models/posenet';
 import { DRAWING_COLOR, VIDEO_SIZE } from '../config';
 
+// MODEL
+
 let net: posenet.PoseNet;
 
 const ADOPTION_POINT = 0.86;
@@ -23,6 +25,14 @@ export const predictPose = async (input: HTMLVideoElement) => {
   }
 };
 
+// VRM
+
+export const getAngle = (p2, p1) => {
+  return Math.atan2(p2.y - p1.y, p2.x - p1.x);
+};
+
+// CANVAS
+
 export const drawKeypoints = (keypoints: posenet.Keypoint[], ctx) => {
   const poseParts = {};
   keypoints.forEach(keypoint => {
@@ -44,7 +54,3 @@ export function drawPoint(ctx, y, x, r) {
   ctx.fillStyle = DRAWING_COLOR;
   ctx.fill();
 }
-
-export const getAngle = (p2, p1) => {
-  return Math.atan2(p2.y - p1.y, p2.x - p1.x);
-};

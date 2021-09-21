@@ -4,7 +4,7 @@ import useVRM from './hooks/useVRM';
 import VRM from './components/VRM';
 import './App.scss';
 import CameraView from './components/CameraView';
-import { loadFacemesh } from './utils/facemesh';
+import { loadFacemesh } from './utils/faces';
 import Controls from './components/Controls';
 import { loadPosenet } from './utils/poses';
 

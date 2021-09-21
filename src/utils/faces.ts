@@ -1,4 +1,29 @@
+import '@tensorflow/tfjs-backend-webgl';
+import * as facemesh from '@tensorflow-models/face-landmarks-detection';
+import { MediaPipeFaceMesh } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
+
 import * as THREE from 'three';
+import { DRAWING_COLOR } from '../config';
+import faceGeo from './faceGeo.json';
+
+// MODEL UTILS
+
+let net: MediaPipeFaceMesh;
+
+export const loadFacemesh = async () => {
+  net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh, {
+    maxFaces: 1,
+  });
+};
+
+export const predictFace = async (input: HTMLVideoElement) => {
+  if (net) {
+    return await net.estimateFaces({ input });
+  }
+};
+
+// VRM UTILS
+
 const Z_INDEX = 2;
 
 export const face2quaternion = annotations => {
@@ -20,4 +45,47 @@ export const lipsOpenFactor = annotations => {
   const lower = annotations.lipsLowerInner[5][Z_INDEX];
   const upper = annotations.lipsUpperInner[5][Z_INDEX];
   return lower - upper;
+};
+
+// CANVAS DRAWING
+
+// https://github.com/spite/FaceMeshFaceGeometry/blob/master/js/geometry.js
+export const FACES = faceGeo;
+
+const drawPath = (ctx, points, closePath) => {
+  const region = new Path2D();
+  region.moveTo(points[0][0], points[0][1]);
+  for (let i = 1; i < points.length; i++) {
+    const point = points[i];
+    region.lineTo(point[0], point[1]);
+  }
+  if (closePath) {
+    region.closePath();
+  }
+  ctx.strokeStyle = 'grey';
+  ctx.stroke(region);
+};
+
+export const drawMesh = (predictions, ctx) => {
+  if (predictions?.length > 0) {
+    predictions.forEach(prediction => {
+      const keypoints = prediction.scaledMesh;
+      for (let i = 0; i < FACES.length / 3; i++) {
+        const points = [FACES[i * 3], FACES[i * 3 + 1], FACES[i * 3 + 2]].map(
+          index => keypoints[index]
+        );
+        drawPath(ctx, points, true);
+      }
+
+      for (let i = 0; i < keypoints.length; i++) {
+        const x = keypoints[i][0];
+        const y = keypoints[i][1];
+
+        ctx.beginPath();
+        ctx.arc(x, y, 1, 0, 3 * Math.PI);
+        ctx.fillStyle = DRAWING_COLOR;
+        ctx.fill();
+      }
+    });
+  }
 };

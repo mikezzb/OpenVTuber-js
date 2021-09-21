@@ -3,9 +3,12 @@ import { RefObject, useRef, FC } from 'react';
 import { useFrame } from 'react-three-fiber';
 import { AnnotatedPrediction } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
 import Webcam from 'react-webcam';
-import { predictFace } from '../utils/facemesh';
-import { face2quaternion, lipsOpenFactor } from '../utils/faces';
-import { drawMesh } from '../utils/drawMesh';
+import {
+  face2quaternion,
+  lipsOpenFactor,
+  drawMesh,
+  predictFace,
+} from '../utils/faces';
 import { drawKeypoints, getAngle, predictPose } from '../utils/poses';
 
 type Props = {
@@ -31,7 +34,7 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       const predictions = await predictFace(webcamRef.current.video);
       if (predictions && (predictions[0] as any)?.annotations) {
         const annotations = (predictions[0] as any)?.annotations;
-        // HEAD
+        // Head
         vrm.humanoid
           .getBoneNode(VRMSchema.HumanoidBoneName.Head)
           .quaternion.slerp(face2quaternion(annotations), 0.1);
