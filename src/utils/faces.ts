@@ -3,10 +3,10 @@ import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import { MediaPipeFaceMesh } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
 
 import * as THREE from 'three';
-import { DRAWING_COLOR } from '../config';
 import faceGeo from './faceGeo.json';
+import { drawLandmarks } from '.';
 
-// MODEL UTILS
+// MODEL
 
 let net: MediaPipeFaceMesh;
 
@@ -22,7 +22,7 @@ export const predictFace = async (input: HTMLVideoElement) => {
   }
 };
 
-// VRM UTILS
+// VRM
 
 const Z_INDEX = 2;
 
@@ -47,7 +47,7 @@ export const lipsOpenFactor = annotations => {
   return lower - upper;
 };
 
-// CANVAS DRAWING
+// CANVAS
 
 // https://github.com/spite/FaceMeshFaceGeometry/blob/master/js/geometry.js
 export const FACES = faceGeo;
@@ -76,16 +76,9 @@ export const drawMesh = (predictions, ctx) => {
         );
         drawPath(ctx, points, true);
       }
-
-      for (let i = 0; i < keypoints.length; i++) {
-        const x = keypoints[i][0];
-        const y = keypoints[i][1];
-
-        ctx.beginPath();
-        ctx.arc(x, y, 1, 0, 3 * Math.PI);
-        ctx.fillStyle = DRAWING_COLOR;
-        ctx.fill();
-      }
+      keypoints.forEach(point => {
+        drawLandmarks(ctx, point[1], point[0], 1);
+      });
     });
   }
 };

@@ -7,6 +7,7 @@ import CameraView from './components/CameraView';
 import { loadFacemesh } from './utils/faces';
 import Controls from './components/Controls';
 import { loadPosenet } from './utils/poses';
+import { loadHandpose } from './utils/hands';
 
 const App: FC = () => {
   const webcamRef = useRef(null);
@@ -17,8 +18,7 @@ const App: FC = () => {
     loadVRM(
       'https://raw.githubusercontent.com/mikezzb/kibou/master/public/vrms/AvatarSample_B.vrm?token=AFSVMPBOMNLNEITIUBH75DDBKKZUM'
     );
-    await loadFacemesh();
-    await loadPosenet();
+    await Promise.all([loadFacemesh(), loadPosenet(), loadHandpose()]);
   };
 
   useEffect(() => {

@@ -1,5 +1,6 @@
 import * as posenet from '@tensorflow-models/posenet';
-import { DRAWING_COLOR, VIDEO_SIZE } from '../config';
+import { VIDEO_SIZE } from '../config';
+import { drawLandmarks } from '.';
 
 // MODEL
 
@@ -42,15 +43,8 @@ export const drawKeypoints = (keypoints: posenet.Keypoint[], ctx) => {
         x: VIDEO_SIZE.width - x,
         y: VIDEO_SIZE.height - y,
       };
-      drawPoint(ctx, y * SCALE, x * SCALE, 3);
+      drawLandmarks(ctx, y * SCALE, x * SCALE);
     }
   });
   return poseParts;
 };
-
-export function drawPoint(ctx, y, x, r) {
-  ctx.beginPath();
-  ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fillStyle = DRAWING_COLOR;
-  ctx.fill();
-}

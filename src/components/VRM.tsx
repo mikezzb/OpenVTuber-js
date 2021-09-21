@@ -10,6 +10,7 @@ import {
   predictFace,
 } from '../utils/faces';
 import { drawKeypoints, getAngle, predictPose } from '../utils/poses';
+import { drawHands, predictHands } from '../utils/hands';
 
 type Props = {
   vrm: ThreeVRM | null;
@@ -50,6 +51,12 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       meshCanvasRef.current.height = videoHeight;
       const ctx = meshCanvasRef.current.getContext('2d');
       drawMesh(predictions, ctx);
+
+      // Hand Handling
+      const handPredictions = await predictHands(webcamRef.current.video);
+      if (handPredictions) {
+        drawHands(handPredictions, ctx);
+      }
 
       // Pose Handling
       const { keypoints } = (await predictPose(webcamRef.current.video)) || {};
