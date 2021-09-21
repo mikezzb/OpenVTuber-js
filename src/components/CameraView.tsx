@@ -2,6 +2,7 @@ import { FC, RefObject } from 'react';
 import '@tensorflow/tfjs-backend-webgl';
 import Webcam from 'react-webcam';
 import './CameraView.scss';
+import { VIDEO_SIZE } from '../config';
 
 type Props = {
   webcamRef: RefObject<Webcam>;
@@ -16,10 +17,12 @@ const CameraView: FC<Props> = ({ webcamRef, meshCanvasRef }) => {
         audio={false}
         className="webcam-video"
         ref={webcamRef}
+        width={VIDEO_SIZE.width}
+        height={VIDEO_SIZE.height}
       />
       <canvas
-        width={320}
-        height={240}
+        width={VIDEO_SIZE.width}
+        height={VIDEO_SIZE.height}
         className="facemesh-canvas"
         ref={meshCanvasRef}
       />

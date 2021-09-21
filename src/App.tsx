@@ -15,7 +15,7 @@ const App: FC = () => {
 
   const init = async () => {
     loadVRM(
-      'https://raw.githubusercontent.com/tattn/VRMKit/main/Tests/Resources/AliciaSolid.vrm'
+      'https://raw.githubusercontent.com/mikezzb/kibou/master/public/vrms/AvatarSample_B.vrm?token=AFSVMPBOMNLNEITIUBH75DDBKKZUM'
     );
     await loadFacemesh();
     await loadPosenet();
@@ -41,6 +41,7 @@ const App: FC = () => {
           zoom: 1.8,
         }}
       >
+        <color attach="background" args={[0, 0, 0]} />
         <directionalLight />
         <VRM webcamRef={webcamRef} meshCanvasRef={meshCanvasRef} vrm={vrm} />
         <Controls />

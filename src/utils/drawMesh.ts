@@ -1,3 +1,5 @@
+import { DRAWING_COLOR } from '../config';
+
 // https://github.com/spite/FaceMeshFaceGeometry/blob/master/js/geometry.js
 export const FACES = [
   127, 34, 139, 11, 0, 37, 232, 231, 120, 72, 37, 39, 128, 121, 47, 232, 121,
@@ -199,7 +201,7 @@ export const drawMesh = (predictions, ctx) => {
 
         ctx.beginPath();
         ctx.arc(x, y, 1, 0, 3 * Math.PI);
-        ctx.fillStyle = 'aqua';
+        ctx.fillStyle = DRAWING_COLOR;
         ctx.fill();
       }
     });
