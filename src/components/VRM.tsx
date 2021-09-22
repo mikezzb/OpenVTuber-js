@@ -30,7 +30,7 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
   }>({ face: [], angle: {} });
 
   useFrame(async ({ clock, mouse }, delta) => {
-    if (vrm && webcamRef?.current) {
+    if (vrm && webcamRef?.current && webcamRef.current.video.readyState === 4) {
       // Face Handling
       const predictions = await predictFace(webcamRef.current.video);
       if (predictions && (predictions[0] as any)?.annotations) {
