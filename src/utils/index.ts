@@ -29,9 +29,25 @@ export const getOpenFactor = (
 
 // CANVAS
 
-export const drawLandmarks = (ctx, y, x, r = 3) => {
+export const drawLandmarks = (ctx, y, x, r = 3, color = DRAWING_COLOR) => {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);
-  ctx.fillStyle = DRAWING_COLOR;
+  ctx.fillStyle = color;
   ctx.fill();
+};
+
+export const drawLine = (
+  ctx,
+  { y: y1, x: x1 },
+  { y: y2, x: x2 },
+  width = 1,
+  color = DRAWING_COLOR,
+  scale = 1
+) => {
+  ctx.beginPath();
+  ctx.moveTo(x1 * scale, y1 * scale);
+  ctx.lineTo(x2 * scale, y2 * scale);
+  ctx.lineWidth = width;
+  ctx.strokeStyle = color;
+  ctx.stroke();
 };

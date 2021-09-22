@@ -10,7 +10,12 @@ import {
   predictFace,
   getEyesOpen,
 } from '../utils/faces';
-import { drawKeypoints, getAngle, predictPose } from '../utils/poses';
+import {
+  drawConnectors,
+  drawKeypoints,
+  getAngle,
+  predictPose,
+} from '../utils/poses';
 
 type Props = {
   vrm: ThreeVRM | null;
@@ -25,12 +30,7 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
   }>({ face: [], angle: {} });
 
   useFrame(async ({ clock, mouse }, delta) => {
-    if (
-      vrm &&
-      typeof webcamRef.current !== 'undefined' &&
-      webcamRef.current !== null &&
-      webcamRef.current.video.readyState === 4
-    ) {
+    if (vrm && webcamRef?.current) {
       // Face Handling
       const predictions = await predictFace(webcamRef.current.video);
       if (predictions && (predictions[0] as any)?.annotations) {
@@ -74,6 +74,7 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       const { keypoints } = (await predictPose(webcamRef.current.video)) || {};
       if (keypoints) {
         const poseParts: any = drawKeypoints(keypoints, ctx);
+        drawConnectors(keypoints, ctx);
 
         if (poseParts.leftShoulder && poseParts.rightShoulder) {
           let angle = getAngle(poseParts.rightShoulder, poseParts.leftShoulder);

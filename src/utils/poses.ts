@@ -1,12 +1,12 @@
 import * as posenet from '@tensorflow-models/posenet';
 import { VIDEO_SIZE } from '../config';
-import { drawLandmarks } from '.';
+import { drawLandmarks, drawLine } from '.';
 
 // MODEL
 
 let net: posenet.PoseNet;
 
-const ADOPTION_POINT = 0.86;
+const ADOPTION_POINT = 0.8;
 const SCALE = 2;
 
 export const loadPosenet = async () => {
@@ -47,4 +47,10 @@ export const drawKeypoints = (keypoints: posenet.Keypoint[], ctx) => {
     }
   });
   return poseParts;
+};
+
+export const drawConnectors = (keypoints: posenet.Keypoint[], ctx) => {
+  posenet.getAdjacentKeyPoints(keypoints, ADOPTION_POINT).forEach(points => {
+    drawLine(ctx, points[0].position, points[1].position, 1, 'red', SCALE);
+  });
 };
