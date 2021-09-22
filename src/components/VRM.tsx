@@ -70,7 +70,9 @@ const VRM: FC<Props> = ({ vrm, webcamRef, meshCanvasRef }) => {
       }
       */
 
-      // Pose Handling
+      /* Pose Handling
+       * https://gist.github.com/atskimura/198e558e0eff94774892d4ee9e22f98e
+       */
       const { keypoints } = (await predictPose(webcamRef.current.video)) || {};
       if (keypoints) {
         const poseParts: any = drawKeypoints(keypoints, ctx);

@@ -1,8 +1,8 @@
 {
-  "name": "kibou",
+  "name": "openvtuber-js",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://mikezzb.github.io/kibou",
+  "homepage": "https://mikezzb.github.io/OpenVTuber-js",
   "dependencies": {
     "@pixiv/three-vrm": "^0.6.6",
     "@tensorflow-models/face-landmarks-detection": "^0.0.3",
