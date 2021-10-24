@@ -15,10 +15,10 @@ const App: FC = () => {
 
   const init = async () => {
     loadVRM(
-      'https://raw.githubusercontent.com/mikezzb/OpenVTuber-js/master/public/vrms/AvatarSample_B.vrm?token=AFSVMPBRK6WKDOVF2IGRNXTBKR3KA'
+      'https://raw.githubusercontent.com/mikezzb/OpenVTuber-js/master/public/vrms/AvatarSample_B.vrm'
     );
-    await loadFacemesh();
-    await loadPosenet();
+    loadFacemesh();
+    loadPosenet();
     // await loadHandpose();
   };
 

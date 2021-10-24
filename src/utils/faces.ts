@@ -30,8 +30,6 @@ const LEFT_EYE_POINTS = [133, 33, 159, 145];
 
 const LIPS_OPEN_SAMPLES = [0, 3, 6, 9];
 const LIPS_OPEN_SAMPLES_LENGTH = LIPS_OPEN_SAMPLES.length;
-const EYES_OPEN_SAMPLES = [0, 1, 2, 3, 4, 5, 6];
-const EYES_OPEN_SAMPLES_LENGTH = EYES_OPEN_SAMPLES.length;
 const CLOSE_EYE_BOUNDARY = 0.1;
 
 export const face2quaternion = annotations => {
